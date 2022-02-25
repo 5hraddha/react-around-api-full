@@ -1,0 +1,35 @@
+{
+  "name": "around-express",
+  "version": "1.0.0",
+  "description": "A package to create a server with an API to serve 'around-the-usa' webpage along with the  user authentication.",
+  "main": "app.js",
+  "scripts": {
+    "lint": "eslint .",
+    "dev": "nodemon app.js",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/5hraddha/around-express.git"
+  },
+  "author": "Shraddha",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/5hraddha/around-express/issues"
+  },
+  "homepage": "https://github.com/5hraddha/around-express#readme",
+  "devDependencies": {
+    "eslint": "^8.6.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.4",
+    "nodemon": "^2.0.15"
+  },
+  "dependencies": {
+    "dotenv": "^14.3.0",
+    "express": "^4.17.2",
+    "express-rate-limit": "^6.2.0",
+    "helmet": "^5.0.1",
+    "mongoose": "^6.1.7",
+    "validator": "^13.7.0"
+  }
+}
