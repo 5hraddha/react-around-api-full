@@ -32,6 +32,20 @@ const userSchema = mongoose.Schema({
       message: 'The entered link to the avatar is badly formed or contains invalid characters',
     },
   },
+  email: {
+    type: String,
+    required: [true, 'Email is required'],
+    unique: true,
+    validate: {
+      validator: validator.isEmail,
+      message: 'The entered email is badly formed or contains invalid characters',
+    },
+  },
+  password: {
+    type: String,
+    required: [true, 'Password is required'],
+    minlength: 8,
+  }
 });
 
 module.exports = mongoose.model('user', userSchema);
