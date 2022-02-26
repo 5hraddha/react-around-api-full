@@ -2,6 +2,7 @@
  * Define all the route handlers related to users on `/users` API endpoint.
  * @module controllers/users
  */
+const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 const getErrorMsg = require('../utils/getErrorMsg');
 const {
@@ -82,22 +83,28 @@ const getUserProfile = (req, res) => {
  * @return {Object} `500` - Internal server error response.
  */
 const createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
+  const { name, about, avatar, email, password } = req.body;
 
-  User.create({ name, about, avatar })
-    .then((user) => res
-      .status(HTTP_SUCCESS_CREATED)
-      .send({ data: user }))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
+  bcrypt.hash(password, 10)
+    .then((hash) => {
+      User.create({ name, about, avatar, email, password: hash })
+      .then((user) => {
+        const { name, about, avatar, email } = user;
         res
-          .status(HTTP_CLIENT_ERROR_BAD_REQUEST)
-          .send({ message: getErrorMsg(err) });
-      } else {
-        res
-          .status(HTTP_INTERNAL_SERVER_ERROR)
-          .send({ message: `${err.name} - An error has occurred on the server` });
-      }
+          .status(HTTP_SUCCESS_CREATED)
+          .send({ data: { name, about, avatar, email }});
+      })
+      .catch((err) => {
+        if (err.name === 'ValidationError') {
+          res
+            .status(HTTP_CLIENT_ERROR_BAD_REQUEST)
+            .send({ message: getErrorMsg(err) });
+        } else {
+          res
+            .status(HTTP_INTERNAL_SERVER_ERROR)
+            .send({ message: `${err.name} - An error has occurred on the server` });
+        }
+      })
     });
 };
 
