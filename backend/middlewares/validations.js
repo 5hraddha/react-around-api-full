@@ -6,20 +6,19 @@ const { Joi, celebrate } = require('celebrate');
 const validator = require('validator');
 const { ObjectId } = require('mongoose').Types;
 
-
 const validateURL = (value, helpers) => {
   if (validator.isURL(value)) {
     return value;
   }
   return helpers.message('The URL is not valid');
-}
+};
 
 const validateEmail = (value, helpers) => {
   if (validator.isEmail(value)) {
     return value;
   }
   return helpers.message('The email is not valid');
-}
+};
 
 /**
  * Middleware for validating object ID passed in the request params
@@ -27,7 +26,7 @@ const validateEmail = (value, helpers) => {
 const validateObjectId = celebrate({
   params: Joi.object().keys({
     userId: Joi.string().required().custom((value, helpers) => {
-      if(ObjectId.isValid(value)){
+      if (ObjectId.isValid(value)) {
         return value;
       }
       return helpers.message('Invalid User ID');
@@ -59,7 +58,6 @@ const validateUser = celebrate({
 /**
  * Middleware for validating card
  */
-
 
 /**
  * Middleware for validating login
