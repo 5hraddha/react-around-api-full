@@ -3,14 +3,10 @@
  * @module routes/users
  */
 const router = require('express').Router();
-const {
-  validateObjectId,
-  validateUser,
-} = require('../middlewares/validations');
+const { validateObjectId } = require('../middlewares/validations');
 const {
   getUsers,
   getUserProfile,
-  createUser,
   updateUserProfile,
   updateUserAvatar,
 } = require('../controllers/users');
@@ -36,17 +32,6 @@ router.get('/', getUsers);
  * @return {Object} `500` - Internal server error response.
  */
 router.get('/:userId', validateObjectId, getUserProfile);
-
-/**
- * POST /users
- * @summary - Create a specific user profile.
- * @param {String} route - Route to serve.
- * @param {Function} routeHandler - A callback to handle the route.
- * @return {Object} `201` - success created response - application/json.
- * @return {Object} `400` - Invalid User ID passed for creating a user.
- * @return {Object} `500` - Internal server error response.
- */
-router.post('/', validateUser, createUser);
 
 /**
  * PATCH /users/me

@@ -3,8 +3,14 @@ const express = require('express');
 const helmet = require('helmet');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
+
 const rateLimiter = require('./middlewares/rateLimiter');
+const {  validateUser } = require('./middlewares/validations');
 const { HTTP_CLIENT_ERROR_NOT_FOUND } = require('./utils/constants');
+const {
+  createUser,
+  loginUser,
+} = require('./controllers/users');
 require('dotenv').config();
 
 const { DB_CONNECTION_URL, PORT = 3000 } = process.env;
@@ -23,6 +29,9 @@ app.use((req, res, next) => {
   };
   next();
 });
+
+app.post('/signin', loginUser);
+app.post('/signup', validateUser, createUser);
 
 // Add all routes
 require('./routes')(app);
