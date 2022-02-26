@@ -24,12 +24,6 @@ mongoose.connect(DB_CONNECTION_URL);
 app.use(helmet());
 app.use(express.json());
 app.use(rateLimiter);
-app.use((req, res, next) => {
-  req.user = {
-    _id: '61eb9fb427053e8816df1826',
-  };
-  next();
-});
 
 app.post('/signin', loginUser);
 app.post('/signup', validateUser, createUser);
