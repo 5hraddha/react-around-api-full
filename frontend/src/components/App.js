@@ -242,6 +242,7 @@ function App() {
           return;
         }
         localStorage.setItem('token', res.token);
+        api.updateAuthUserToken(res.token);
         setCurrentUserEmail(loginEmail);
         setLoginEmail('');
         setLoginPassword('');
@@ -287,6 +288,7 @@ function App() {
 
   const handleLogOut = () => {
     localStorage.removeItem('token');
+    api.updateAuthUserToken('');
     history.push('/login');
     setIsLoggedIn(false);
     setCurrentUser({});

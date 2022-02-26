@@ -26,6 +26,13 @@ class Api {
   }
 
   /**
+   * Update the user token in the request header when the user logs in or logs out.
+   */
+  updateAuthUserToken = (token) => {
+    this._headers = { ...this._headers, authorization: `Bearer ${token}` };
+  }
+
+  /**
    * Get initial image cards from the server using a GET request.
    * @return {Promise} The Promise of the Fetch API call.
    */
