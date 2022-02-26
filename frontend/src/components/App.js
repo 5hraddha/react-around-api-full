@@ -52,24 +52,24 @@ function App() {
 //                      Fetch initial cards & user data on page load                             //
 // ********************************************************************************************* //
   React.useEffect(() => {
-    api
+    isLoggedIn && api
       .getInitialCards()
         .then(setCards)
         .catch(err => {
           console.log("Uh-oh! Error occurred while fetching the existing cards from the server.");
           console.log(err);
         });
-  }, []);
+  }, [isLoggedIn]);
 
   React.useEffect(() => {
-    api
+    isLoggedIn && api
       .getUserData()
       .then(res => setCurrentUser(res))
       .catch(err => {
         console.log("Uh-oh! Error occurred while fetching the current user data from the server.");
         console.log(err);
       });
-  }, []);
+  }, [isLoggedIn]);
 
 // ********************************************************************************************* //
 //                        Handle mouse click or Esc key down event                               //

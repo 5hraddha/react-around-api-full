@@ -128,10 +128,15 @@ class Api {
   }
 }
 
+const BASE_URL =
+  process.env.NODE_ENV === 'production'
+    ? 'http://localhost:3000'
+    : 'http://localhost:3000';
+
 export default new Api({
-  baseUrl: "https://around.nomoreparties.co/v1/group-12",
+  baseUrl: BASE_URL,
   headers: {
-    authorization: "9bc9c0f1-5a8a-40aa-b985-20e7b24d1389",
+    authorization: `Bearer ${localStorage.getItem('token')}`,
     "Content-Type": "application/json"
   }
 });

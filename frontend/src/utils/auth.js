@@ -74,8 +74,13 @@ class Auth {
   }
 }
 
+const BASE_URL =
+  process.env.NODE_ENV === 'production'
+    ? 'http://localhost:3000'
+    : 'http://localhost:3000';
+
 export default new Auth({
-  baseUrl: "https://register.nomoreparties.co",
+  baseUrl: BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },

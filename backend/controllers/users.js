@@ -88,9 +88,11 @@ const getUserProfile = (req, res) => {
 const getCurrentUserProfile = (req, res) => {
   User.findById(req.user._id)
     .orFail()
-    .then((user) => res
+    .then((user) => {
+      res
       .status(HTTP_SUCCESS_OK)
-      .send({ data: user }))
+      .send({ data: user });
+    })
     .catch((err) => {
       if (err.name === 'DocumentNotFoundError') {
         res

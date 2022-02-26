@@ -3,6 +3,7 @@ const express = require('express');
 const helmet = require('helmet');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
+const cors = require('cors');
 
 const rateLimiter = require('./middlewares/rateLimiter');
 const { validateUser } = require('./middlewares/validations');
@@ -22,6 +23,8 @@ mongoose.connect(DB_CONNECTION_URL);
 
 // Add all the middlewares
 app.use(helmet());
+app.use(cors());
+app.options('*', cors());
 app.use(express.json());
 app.use(rateLimiter);
 
