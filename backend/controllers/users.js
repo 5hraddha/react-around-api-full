@@ -3,7 +3,10 @@
  * @module controllers/users
  */
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+
+const { NODE_ENV, JWT_SECRET } = process.env;
 const getErrorMsg = require('../utils/getErrorMsg');
 const {
   HTTP_SUCCESS_OK,
@@ -83,28 +86,62 @@ const getUserProfile = (req, res) => {
  * @return {Object} `500` - Internal server error response.
  */
 const createUser = (req, res) => {
-  const { name, about, avatar, email, password } = req.body;
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
 
   bcrypt.hash(password, 10)
     .then((hash) => {
-      User.create({ name, about, avatar, email, password: hash })
-      .then((user) => {
-        const { name, about, avatar, email } = user;
-        res
-          .status(HTTP_SUCCESS_CREATED)
-          .send({ data: { name, about, avatar, email }});
+      User.create({
+        name, about, avatar, email, password: hash,
       })
-      .catch((err) => {
-        if (err.name === 'ValidationError') {
+        .then((user) => {
           res
-            .status(HTTP_CLIENT_ERROR_BAD_REQUEST)
-            .send({ message: getErrorMsg(err) });
-        } else {
-          res
-            .status(HTTP_INTERNAL_SERVER_ERROR)
-            .send({ message: `${err.name} - An error has occurred on the server` });
-        }
-      })
+            .status(HTTP_SUCCESS_CREATED)
+            .send({
+              data: {
+                name: user.name,
+                about: user.about,
+                avatar: user.avatar,
+                email: user.email,
+              },
+            });
+        })
+        .catch((err) => {
+          if (err.name === 'ValidationError') {
+            res
+              .status(HTTP_CLIENT_ERROR_BAD_REQUEST)
+              .send({ message: getErrorMsg(err) });
+          } else {
+            res
+              .status(HTTP_INTERNAL_SERVER_ERROR)
+              .send({ message: `${err.name} - An error has occurred on the server` });
+          }
+        });
+    });
+};
+
+/**
+ * Route handler for POST request on `/signin` API endpoint for user login.
+ * @param {Object} req - The request object
+ * @param {Object} res - The response object.
+ * @return {Object} `200` - success created response - application/json.
+ * @return {Object} `401` - Unauthorized Error.
+ */
+const loginUser = (req, res) => {
+  const { email, password } = req.body;
+
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign(
+        { _id: user._id },
+        NODE_ENV === 'production' ? JWT_SECRET : 'super-secret-key',
+        { expiresIn: '7d' },
+      );
+      res.send({ token });
+    })
+    .catch((err) => {
+      res.status(401).send({ message: err.message });
     });
 };
 
@@ -204,6 +241,7 @@ module.exports = {
   getUsers,
   getUserProfile,
   createUser,
+  loginUser,
   updateUserProfile,
   updateUserAvatar,
 };

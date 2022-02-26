@@ -4,6 +4,7 @@
  */
 const mongoose = require('mongoose');
 const validator = require('validator');
+const bcrypt = require('bcryptjs');
 
 /**
  * User schema. Contains all the users related fields: name, about and avatar
@@ -48,7 +49,23 @@ const userSchema = mongoose.Schema({
     type: String,
     required: [true, 'Password is required'],
     minlength: 8,
-  }
+  },
 });
+
+userSchema.statics.findUserByCredentials = function findUserByCredentials(email, password) {
+  return this.findOne({ email })
+    .then((user) => {
+      if (!user) {
+        return Promise.reject(new Error('Incorrect email or password'));
+      }
+      return bcrypt.compare(password, user.password)
+        .then((isMatched) => {
+          if (!isMatched) {
+            return Promise.reject(new Error('Incorrect email or password'));
+          }
+          return user;
+        });
+    });
+};
 
 module.exports = mongoose.model('user', userSchema);
