@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 
 const rateLimiter = require('./middlewares/rateLimiter');
-const {  validateUser } = require('./middlewares/validations');
+const { validateUser } = require('./middlewares/validations');
 const { HTTP_CLIENT_ERROR_NOT_FOUND } = require('./utils/constants');
 const {
   createUser,
