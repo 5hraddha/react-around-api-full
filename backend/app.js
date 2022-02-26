@@ -6,6 +6,7 @@ const { errors } = require('celebrate');
 
 const rateLimiter = require('./middlewares/rateLimiter');
 const { validateUser } = require('./middlewares/validations');
+const auth = require('./middlewares/auth');
 const { HTTP_CLIENT_ERROR_NOT_FOUND } = require('./utils/constants');
 const {
   createUser,
@@ -34,6 +35,7 @@ app.post('/signin', loginUser);
 app.post('/signup', validateUser, createUser);
 
 // Add all routes
+app.use(auth);
 require('./routes')(app);
 
 app.use(errors());
