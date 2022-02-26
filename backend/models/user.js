@@ -16,6 +16,7 @@ const userSchema = mongoose.Schema({
     trim: true,
     minlength: 2,
     maxlength: 30,
+    default: 'Jacques Cousteau',
   },
   about: {
     type: String,
@@ -23,10 +24,12 @@ const userSchema = mongoose.Schema({
     trim: true,
     minlength: 2,
     maxlength: 30,
+    default: 'Explorer',
   },
   avatar: {
     type: String,
     required: [true, 'A link to the user avatar is required'],
+    default: 'https://pictures.s3.yandex.net/resources/avatar_1604080799.jpg',
     validate: {
       validator: validator.isURL,
       message: 'The entered link to the avatar is badly formed or contains invalid characters',
