@@ -78,6 +78,33 @@ const getUserProfile = (req, res) => {
 };
 
 /**
+ * Route handler for GET request on `/users/me` API endpoint to get current user profile.
+ * @param {Object} req - The request object
+ * @param {Object} res - The response object.
+ * @return {Object} `200` - success response - application/json.
+ * @return {Object} `404` - The server can not find the requested resource.
+ * @return {Object} `500` - Internal server error response.
+ */
+const getCurrentUserProfile = (req, res) => {
+  User.findById(req.user._id)
+    .orFail()
+    .then((user) => res
+      .status(HTTP_SUCCESS_OK)
+      .send({ data: user }))
+    .catch((err) => {
+      if (err.name === 'DocumentNotFoundError') {
+        res
+          .status(HTTP_CLIENT_ERROR_NOT_FOUND)
+          .send({ message: `${err.name} - User ID not found` });
+      } else {
+        res
+          .status(HTTP_INTERNAL_SERVER_ERROR)
+          .send({ message: `${err.name} - An error has occurred on the server` });
+      }
+    });
+}
+
+/**
  * Route handler for POST request on `/users` API endpoint to create a specific user profile.
  * @param {Object} req - The request object
  * @param {Object} res - The response object.
@@ -240,6 +267,7 @@ const updateUserAvatar = (req, res) => {
 module.exports = {
   getUsers,
   getUserProfile,
+  getCurrentUserProfile,
   createUser,
   loginUser,
   updateUserProfile,
