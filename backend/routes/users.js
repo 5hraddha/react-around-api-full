@@ -4,6 +4,10 @@
  */
 const router = require('express').Router();
 const {
+  validateObjectId,
+  validateUser,
+} = require('../middlewares/validations');
+const {
   getUsers,
   getUserProfile,
   createUser,
@@ -31,7 +35,7 @@ router.get('/', getUsers);
  * @return {Object} `404` - The server can not find the requested resource.
  * @return {Object} `500` - Internal server error response.
  */
-router.get('/:userId', getUserProfile);
+router.get('/:userId', validateObjectId, getUserProfile);
 
 /**
  * POST /users
@@ -42,7 +46,7 @@ router.get('/:userId', getUserProfile);
  * @return {Object} `400` - Invalid User ID passed for creating a user.
  * @return {Object} `500` - Internal server error response.
  */
-router.post('/', createUser);
+router.post('/', validateUser, createUser);
 
 /**
  * PATCH /users/me

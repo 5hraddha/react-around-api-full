@@ -2,6 +2,7 @@
 const express = require('express');
 const helmet = require('helmet');
 const mongoose = require('mongoose');
+const { errors } = require('celebrate');
 const rateLimiter = require('./middlewares/rateLimiter');
 const { HTTP_CLIENT_ERROR_NOT_FOUND } = require('./utils/constants');
 require('dotenv').config();
@@ -25,6 +26,8 @@ app.use((req, res, next) => {
 
 // Add all routes
 require('./routes')(app);
+
+app.use(errors());
 
 app.use((req, res) => res
   .status(HTTP_CLIENT_ERROR_NOT_FOUND)
