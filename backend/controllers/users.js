@@ -234,7 +234,7 @@ const updateUserAvatar = (req, res) => {
   const { avatar } = req.body;
 
   User.findOneAndUpdate(
-    currentUser,
+    { _id: currentUser },
     { avatar },
     {
       new: true,
@@ -244,7 +244,7 @@ const updateUserAvatar = (req, res) => {
     .orFail()
     .then((user) => res
       .status(HTTP_SUCCESS_OK)
-      .send({ data: user }))
+      .send(user))
     .catch((err) => {
       if (err.name === 'DocumentNotFoundError') {
         res
