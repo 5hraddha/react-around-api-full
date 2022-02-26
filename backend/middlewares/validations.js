@@ -50,7 +50,7 @@ const validateUser = celebrate({
     avatar: Joi.string().custom(validateURL),
     email: Joi.string().required().custom(validateEmail),
     password: Joi.string().min(8).required().messages({
-      'string.min': 'The name field needs at least 8 characters',
+      'string.min': 'The password field needs at least 8 characters',
     }),
   }),
 });

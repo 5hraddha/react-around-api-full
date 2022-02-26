@@ -91,7 +91,7 @@ const getCurrentUserProfile = (req, res) => {
     .then((user) => {
       res
       .status(HTTP_SUCCESS_OK)
-      .send({ data: user });
+      .send(user);
     })
     .catch((err) => {
       if (err.name === 'DocumentNotFoundError') {

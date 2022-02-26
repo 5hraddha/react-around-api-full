@@ -53,7 +53,7 @@ const createCard = (req, res) => {
   Card.create({ name, link, owner })
     .then((card) => res
       .status(HTTP_SUCCESS_CREATED)
-      .send({ data: card }))
+      .send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res
@@ -83,7 +83,7 @@ const deleteCard = (req, res) => {
     .orFail()
     .then((card) => res
       .status(HTTP_SUCCESS_OK)
-      .send({ data: card }))
+      .send(card))
     .catch((err) => {
       if (err.name === 'DocumentNotFoundError') {
         res
@@ -122,7 +122,7 @@ const likeCard = (req, res) => {
     .orFail()
     .then((card) => res
       .status(HTTP_SUCCESS_OK)
-      .send({ data: card }))
+      .send(card))
     .catch((err) => {
       if (err.name === 'DocumentNotFoundError') {
         res
@@ -161,7 +161,7 @@ const dislikeCard = (req, res) => {
     .orFail()
     .then((card) => res
       .status(HTTP_SUCCESS_OK)
-      .send({ data: card }))
+      .send(card))
     .catch((err) => {
       if (err.name === 'DocumentNotFoundError') {
         res

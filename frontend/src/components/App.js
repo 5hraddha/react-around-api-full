@@ -135,7 +135,7 @@ function App() {
   };
 
   const handleCardLike = card => {
-    const isLiked = card.likes.some(i => i._id === currentUser._id);
+    const isLiked = card.likes.some(cardId => cardId === currentUser._id);
     api
       .changeLikeCardStatus(card._id, isLiked)
         .then(newCard =>
@@ -166,7 +166,7 @@ function App() {
     api
       .updateUserData(userData)
       .then(updatedUserData => {
-        setCurrentUser(updatedUserData);
+        setCurrentUser(updatedUserData.data);
         closeAllPopups();
       })
       .catch(err => {
@@ -181,7 +181,7 @@ function App() {
     api
       .updateUserAvatar(newAvatarUrl)
       .then(updatedUserData => {
-        setCurrentUser(updatedUserData);
+        setCurrentUser(updatedUserData.data);
         closeAllPopups();
       })
       .catch(err => {
@@ -269,12 +269,12 @@ function App() {
           if(!res){
             return;
           }
-          setCurrentUserEmail(res.data.email);
+          setCurrentUserEmail(res.email);
           setIsLoggedIn(true);
           history.push('/');
         })
         .catch(err => {
-          console.log('Uh-oh! Error occurred while validating token.');
+          console.log('Uh-oh! Error occurred while validating the token.');
           if(err.status === 400){
             console.log('Token not provided or provided in the wrong format.');
           }
@@ -289,6 +289,7 @@ function App() {
     localStorage.removeItem('token');
     history.push('/login');
     setIsLoggedIn(false);
+    setCurrentUser({});
     setCurrentUserEmail('');
   }
 

@@ -13,7 +13,7 @@ function Card(props){
   const currentUser = React.useContext(CurrentUserContext);
 
   // Check if the current user is the owner of the current card and set className for Delete button accordingly
-  const isOwn = card.owner._id === currentUser._id;
+  const isOwn = card.owner === currentUser._id;
   const cardDeleteButtonClassName = (
     `element__delete-btn ${isOwn
       ? 'element__delete-btn_visible'
@@ -21,7 +21,7 @@ function Card(props){
   );
 
   // Check if the card was liked by the current user and set className for Like button accordingly
-  const isLiked = card.likes.some(i => i._id === currentUser._id);
+  const isLiked = card.likes.some(cardId => cardId === currentUser._id);
   const cardLikeButtonClassName = `element__like-btn ${(isLiked) && 'element__like-btn_active'}`;
 
   const handleClick = () => onCardClick(card);
