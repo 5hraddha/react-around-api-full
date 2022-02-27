@@ -79,11 +79,18 @@ const createCard = (req, res) => {
 const deleteCard = (req, res) => {
   const { cardId } = req.params;
 
-  Card.findByIdAndDelete(cardId)
+  Card.findById({ _id: cardId})
     .orFail()
-    .then((card) => res
-      .status(HTTP_SUCCESS_OK)
-      .send(card))
+    .then((card) => {
+      if(card.owner.toString() === req.user._id){
+        Card.findByIdAndRemove({ _id: cardId })
+          .orFail()
+          .then((card) => res
+            .status(HTTP_SUCCESS_OK)
+            .send(card))
+          .catch((err) => console.log(err))
+      }
+    })
     .catch((err) => {
       if (err.name === 'DocumentNotFoundError') {
         res
