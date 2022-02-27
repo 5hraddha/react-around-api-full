@@ -3,7 +3,10 @@
  * @module routes/users
  */
 const router = require('express').Router();
-const { validateObjectId } = require('../middlewares/validations');
+const {
+  validateUserId,
+  validateRequestAuth,
+} = require('../middlewares/validations');
 const {
   getUsers,
   getUserProfile,
@@ -20,7 +23,7 @@ const {
  * @return {Object} `200` - success response - application/json.
  * @return {Object} `500` - Internal server error response.
  */
-router.get('/', getUsers);
+router.get('/', validateRequestAuth, getUsers);
 
 /**
  * GET /users/me
@@ -31,7 +34,7 @@ router.get('/', getUsers);
  * @return {Object} `404` - The server can not find the requested resource.
  * @return {Object} `500` - Internal server error response.
  */
-router.get('/me', getCurrentUserProfile);
+router.get('/me', validateRequestAuth, getCurrentUserProfile);
 
 /**
  * GET /users/:userId
@@ -43,7 +46,7 @@ router.get('/me', getCurrentUserProfile);
  * @return {Object} `404` - The server can not find the requested resource.
  * @return {Object} `500` - Internal server error response.
  */
-router.get('/:userId', validateObjectId, getUserProfile);
+router.get('/:userId', validateRequestAuth, validateUserId, getUserProfile);
 
 /**
  * PATCH /users/me
@@ -55,7 +58,7 @@ router.get('/:userId', validateObjectId, getUserProfile);
  * @return {Object} `404` - The server can not find the requested resource.
  * @return {Object} `500` - Internal server error response.
  */
-router.patch('/me', updateUserProfile);
+router.patch('/me', validateRequestAuth, updateUserProfile);
 
 /**
  * PATCH /users/me/avatar
@@ -67,6 +70,6 @@ router.patch('/me', updateUserProfile);
  * @return {Object} `404` - The server can not find the requested resource.
  * @return {Object} `500` - Internal server error response.
  */
-router.patch('/me/avatar', updateUserAvatar);
+router.patch('/me/avatar', validateRequestAuth, updateUserAvatar);
 
 module.exports = router;

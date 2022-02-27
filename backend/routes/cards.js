@@ -4,6 +4,11 @@
  */
 const router = require('express').Router();
 const {
+  validateCard,
+  validateCardId,
+  validateRequestAuth,
+} = require('../middlewares/validations');
+const {
   getCards,
   createCard,
   deleteCard,
@@ -19,7 +24,7 @@ const {
  * @return {Object} `200` - success response - application/json.
  * @return {Object} `500` - Internal server error response.
  */
-router.get('/', getCards);
+router.get('/', validateRequestAuth, getCards);
 
 /**
  * POST /cards
@@ -30,7 +35,7 @@ router.get('/', getCards);
  * @return {Object} `400` - Invalid Card data passed for creating a card.
  * @return {Object} `500` - Internal server error response.
  */
-router.post('/', createCard);
+router.post('/', validateRequestAuth, validateCard, createCard);
 
 /**
  * DELETE /cards/:cardId
@@ -42,7 +47,7 @@ router.post('/', createCard);
  * @return {Object} `404` - The server can not find the requested resource.
  * @return {Object} `500` - Internal server error response.
  */
-router.delete('/:cardId', deleteCard);
+router.delete('/:cardId', validateRequestAuth, validateCardId, deleteCard);
 
 /**
  * PUT /cards/:cardId/likes
@@ -54,7 +59,7 @@ router.delete('/:cardId', deleteCard);
  * @return {Object} `404` - The server can not find the requested resource.
  * @return {Object} `500` - Internal server error response.
  */
-router.put('/:cardId/likes', likeCard);
+router.put('/:cardId/likes', validateRequestAuth, validateCardId, likeCard);
 
 /**
  * DELETE /cards/:cardId/likes
@@ -66,6 +71,6 @@ router.put('/:cardId/likes', likeCard);
  * @return {Object} `404` - The server can not find the requested resource.
  * @return {Object} `500` - Internal server error response.
  */
-router.delete('/:cardId/likes', dislikeCard);
+router.delete('/:cardId/likes', validateRequestAuth, validateCardId, dislikeCard);
 
 module.exports = router;

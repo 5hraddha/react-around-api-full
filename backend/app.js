@@ -7,7 +7,7 @@ const cors = require('cors');
 
 const rateLimiter = require('./middlewares/rate-limiter');
 const errorHandler = require('./middlewares/error-handler');
-const { validateUser } = require('./middlewares/validations');
+const { validateUser, validateLogin } = require('./middlewares/validations');
 const auth = require('./middlewares/auth');
 
 const {
@@ -29,7 +29,7 @@ app.options('*', cors());
 app.use(express.json());
 app.use(rateLimiter);
 
-app.post('/signin', loginUser);
+app.post('/signin', validateLogin, loginUser);
 app.post('/signup', validateUser, createUser);
 
 // Add all routes
