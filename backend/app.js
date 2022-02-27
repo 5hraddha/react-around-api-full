@@ -5,10 +5,11 @@ const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 const cors = require('cors');
 
-const rateLimiter = require('./middlewares/rateLimiter');
+const rateLimiter = require('./middlewares/rate-limiter');
+const errorHandler = require('./middlewares/error-handler');
 const { validateUser } = require('./middlewares/validations');
 const auth = require('./middlewares/auth');
-const { HTTP_CLIENT_ERROR_NOT_FOUND } = require('./utils/constants');
+
 const {
   createUser,
   loginUser,
@@ -21,7 +22,7 @@ const app = express();
 // Connect to the MongoDB server
 mongoose.connect(DB_CONNECTION_URL);
 
-// Add all the middlewares
+// Add all middlewares
 app.use(helmet());
 app.use(cors());
 app.options('*', cors());
@@ -35,11 +36,11 @@ app.post('/signup', validateUser, createUser);
 app.use(auth);
 require('./routes')(app);
 
+// celebrate error handler
 app.use(errors());
 
-app.use((req, res) => res
-  .status(HTTP_CLIENT_ERROR_NOT_FOUND)
-  .send({ message: 'Requested resource not found' }));
+// Centralized error handler
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console

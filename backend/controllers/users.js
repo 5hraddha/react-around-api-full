@@ -7,14 +7,14 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
-const getErrorMsg = require('../utils/getErrorMsg');
 const {
   HTTP_SUCCESS_OK,
   HTTP_SUCCESS_CREATED,
-  HTTP_CLIENT_ERROR_BAD_REQUEST,
-  HTTP_CLIENT_ERROR_NOT_FOUND,
-  HTTP_INTERNAL_SERVER_ERROR,
 } = require('../utils/constants');
+const BadRequestError = require('../errors/bad-request-error');
+const ConflictError = require('../errors/conflict-error');
+const NotFoundError = require('../errors/not-found-error');
+const UnauthorizedError = require('../errors/unauthorized-error');
 
 /**
  * Route handler for GET request on `/users` API endpoint to get all the users.
@@ -24,23 +24,13 @@ const {
  * @return {Object} `404` - The server can not find the requested resource.
  * @return {Object} `500` - Internal server error response.
  */
-const getUsers = (req, res) => {
+const getUsers = (req, res, next) => {
   User.find({})
-    .orFail()
+    .orFail(new NotFoundError('List of users not found'))
     .then((users) => res
       .status(HTTP_SUCCESS_OK)
       .send(users))
-    .catch((err) => {
-      if (err.name === 'DocumentNotFoundError') {
-        res
-          .status(HTTP_CLIENT_ERROR_NOT_FOUND)
-          .send({ message: `${err.name} - Users not found` });
-      } else {
-        res
-          .status(HTTP_INTERNAL_SERVER_ERROR)
-          .send({ message: `${err.name} - An error has occurred on the server` });
-      }
-    });
+    .catch(next);
 };
 
 /**
@@ -52,27 +42,19 @@ const getUsers = (req, res) => {
  * @return {Object} `404` - The server can not find the requested resource.
  * @return {Object} `500` - Internal server error response.
  */
-const getUserProfile = (req, res) => {
+const getUserProfile = (req, res, next) => {
   const { userId } = req.params;
 
   User.findById(userId)
-    .orFail()
+    .orFail(new NotFoundError('User ID not found'))
     .then((user) => res
       .status(HTTP_SUCCESS_OK)
-      .send({ data: user }))
+      .send(user))
     .catch((err) => {
-      if (err.name === 'DocumentNotFoundError') {
-        res
-          .status(HTTP_CLIENT_ERROR_NOT_FOUND)
-          .send({ message: `${err.name} - User ID not found` });
-      } else if (err.name === 'CastError') {
-        res
-          .status(HTTP_CLIENT_ERROR_BAD_REQUEST)
-          .send({ message: `${err.name} - Invalid User ID passed for searching a user` });
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Invalid User ID passed for searching a user'));
       } else {
-        res
-          .status(HTTP_INTERNAL_SERVER_ERROR)
-          .send({ message: `${err.name} - An error has occurred on the server` });
+        next(err);
       }
     });
 };
@@ -85,25 +67,13 @@ const getUserProfile = (req, res) => {
  * @return {Object} `404` - The server can not find the requested resource.
  * @return {Object} `500` - Internal server error response.
  */
-const getCurrentUserProfile = (req, res) => {
+const getCurrentUserProfile = (req, res, next) => {
   User.findById(req.user._id)
-    .orFail()
-    .then((user) => {
-      res
+    .orFail(new NotFoundError('User ID not found'))
+    .then((user) => res
       .status(HTTP_SUCCESS_OK)
-      .send(user);
-    })
-    .catch((err) => {
-      if (err.name === 'DocumentNotFoundError') {
-        res
-          .status(HTTP_CLIENT_ERROR_NOT_FOUND)
-          .send({ message: `${err.name} - User ID not found` });
-      } else {
-        res
-          .status(HTTP_INTERNAL_SERVER_ERROR)
-          .send({ message: `${err.name} - An error has occurred on the server` });
-      }
-    });
+      .send(user))
+    .catch(next);
 }
 
 /**
@@ -112,14 +82,22 @@ const getCurrentUserProfile = (req, res) => {
  * @param {Object} res - The response object.
  * @return {Object} `201` - success created response - application/json.
  * @return {Object} `400` - Invalid User data passed for creating a user.
+ * @return {Object} `409` - Email ID already exists.
  * @return {Object} `500` - Internal server error response.
  */
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
 
-  bcrypt.hash(password, 10)
+  User.findOne({ email })
+    .then((user) => {
+      if(user){
+        throw new ConflictError('Email ID already exists. Try a different one.');
+      } else {
+        return bcrypt.hash(password, 10);
+      }
+    })
     .then((hash) => {
       User.create({
         name, about, avatar, email, password: hash,
@@ -128,26 +106,19 @@ const createUser = (req, res) => {
           res
             .status(HTTP_SUCCESS_CREATED)
             .send({
-              data: {
-                name: user.name,
-                about: user.about,
-                avatar: user.avatar,
-                email: user.email,
-              },
+              name: user.name,
+              about: user.about,
+              avatar: user.avatar,
+              email: user.email,
             });
         })
         .catch((err) => {
           if (err.name === 'ValidationError') {
-            res
-              .status(HTTP_CLIENT_ERROR_BAD_REQUEST)
-              .send({ message: getErrorMsg(err) });
-          } else {
-            res
-              .status(HTTP_INTERNAL_SERVER_ERROR)
-              .send({ message: `${err.name} - An error has occurred on the server` });
+            next(new BadRequestError('Missing or Invalid email or password'));
           }
         });
-    });
+    })
+    .catch(next);
 };
 
 /**
@@ -156,12 +127,16 @@ const createUser = (req, res) => {
  * @param {Object} res - The response object.
  * @return {Object} `200` - success created response - application/json.
  * @return {Object} `401` - Unauthorized Error.
+ * @return {Object} `500` - Internal server error response.
  */
-const loginUser = (req, res) => {
+const loginUser = (req, res, next) => {
   const { email, password } = req.body;
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
+      if(!user){
+        throw new UnauthorizedError('Invalid email or password');
+      }
       const token = jwt.sign(
         { _id: user._id },
         NODE_ENV === 'production' ? JWT_SECRET : 'super-secret-key',
@@ -169,9 +144,7 @@ const loginUser = (req, res) => {
       );
       res.send({ token });
     })
-    .catch((err) => {
-      res.status(401).send({ message: err.message });
-    });
+    .catch(next);
 };
 
 /**
@@ -188,34 +161,24 @@ const updateUserProfile = (req, res) => {
   const { name, about } = req.body;
 
   User.findByIdAndUpdate(
-    currentUser,
+    { _id: currentUser },
     { name, about },
     {
       new: true,
       runValidators: true,
     },
   )
-    .orFail()
+    .orFail(new NotFoundError('User ID not found'))
     .then((user) => res
       .status(HTTP_SUCCESS_OK)
-      .send({ data: user }))
+      .send(user))
     .catch((err) => {
-      if (err.name === 'DocumentNotFoundError') {
-        res
-          .status(HTTP_CLIENT_ERROR_NOT_FOUND)
-          .send({ message: `${err.name} - User not found` });
-      } else if (err.name === 'ValidationError') {
-        res
-          .status(HTTP_CLIENT_ERROR_BAD_REQUEST)
-          .send({ message: getErrorMsg(err) });
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Invalid Title or Subtitle'));
       } else if (err.name === 'CastError') {
-        res
-          .status(HTTP_CLIENT_ERROR_BAD_REQUEST)
-          .send({ message: `${err.name} - Invalid User ID passed for updation` });
+        next(new BadRequestError('Invalid User ID'));
       } else {
-        res
-          .status(HTTP_INTERNAL_SERVER_ERROR)
-          .send({ message: `${err.name} - An error has occurred on the server` });
+        next(err);
       }
     });
 };
@@ -241,27 +204,17 @@ const updateUserAvatar = (req, res) => {
       runValidators: true,
     },
   )
-    .orFail()
+    .orFail(new NotFoundError('User ID not found'))
     .then((user) => res
       .status(HTTP_SUCCESS_OK)
       .send(user))
     .catch((err) => {
-      if (err.name === 'DocumentNotFoundError') {
-        res
-          .status(HTTP_CLIENT_ERROR_NOT_FOUND)
-          .send({ message: `${err.name} - User not found` });
-      } else if (err.name === 'ValidationError') {
-        res
-          .status(HTTP_CLIENT_ERROR_BAD_REQUEST)
-          .send({ message: getErrorMsg(err) });
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Invalid Avatar Link'));
       } else if (err.name === 'CastError') {
-        res
-          .status(HTTP_CLIENT_ERROR_BAD_REQUEST)
-          .send({ message: `${err.name} - Invalid avatar link passed for updation` });
+        next(new BadRequestError('Invalid User ID'));
       } else {
-        res
-          .status(HTTP_INTERNAL_SERVER_ERROR)
-          .send({ message: `${err.name} - An error has occurred on the server` });
+        next(err);
       }
     });
 };

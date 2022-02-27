@@ -1,5 +1,8 @@
 module.exports.HTTP_SUCCESS_OK = 200;
 module.exports.HTTP_SUCCESS_CREATED = 201;
 module.exports.HTTP_CLIENT_ERROR_BAD_REQUEST = 400;
+module.exports.HTTP_CLIENT_ERROR_UNAUTHORIZED = 401;
+module.exports.HTTP_CLIENT_ERROR_FORBIDDEN = 403;
 module.exports.HTTP_CLIENT_ERROR_NOT_FOUND = 404;
+module.exports.HTTP_CLIENT_ERROR_CONFLICT = 409;
 module.exports.HTTP_INTERNAL_SERVER_ERROR = 500;

@@ -166,7 +166,7 @@ function App() {
     api
       .updateUserData(userData)
       .then(updatedUserData => {
-        setCurrentUser(updatedUserData.data);
+        setCurrentUser(updatedUserData);
         closeAllPopups();
       })
       .catch(err => {

@@ -1,6 +1,6 @@
 /**
  * Define the rate limiting middleware for the API, using express-rate-limit package
- * @module middlewares/rateLimiter
+ * @module middlewares/rate-limiter
  */
 const rateLimit = require('express-rate-limit');
 
