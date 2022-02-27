@@ -74,7 +74,7 @@ const getCurrentUserProfile = (req, res, next) => {
       .status(HTTP_SUCCESS_OK)
       .send(user))
     .catch(next);
-}
+};
 
 /**
  * Route handler for POST request on `/users` API endpoint to create a specific user profile.
@@ -92,7 +92,7 @@ const createUser = (req, res, next) => {
 
   User.findOne({ email })
     .then((user) => {
-      if(user){
+      if (user) {
         throw new ConflictError('Email ID already exists. Try a different one.');
       } else {
         return bcrypt.hash(password, 10);
@@ -134,7 +134,7 @@ const loginUser = (req, res, next) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      if(!user){
+      if (!user) {
         throw new UnauthorizedError('Invalid email or password');
       }
       const token = jwt.sign(

@@ -11,8 +11,8 @@ const errorHandler = (err, req, res, next) => {
     .send({
       message: statusCode === HTTP_INTERNAL_SERVER_ERROR
         ? 'An error occurred on the server'
-        : message
+        : message,
     });
-}
+};
 
 module.exports = errorHandler;

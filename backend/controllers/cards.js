@@ -8,7 +8,8 @@ const {
   HTTP_SUCCESS_CREATED,
 } = require('../utils/constants');
 const BadRequestError = require('../errors/bad-request-error');
-const ForbiddenError = require(`../errors/forbidden-error`);
+
+const ForbiddenError = require('../errors/forbidden-error');
 const NotFoundError = require('../errors/not-found-error');
 
 /**
@@ -65,18 +66,18 @@ const createCard = (req, res, next) => {
 const deleteCard = (req, res, next) => {
   const { cardId } = req.params;
 
-  Card.findById({ _id: cardId})
+  Card.findById({ _id: cardId })
     .orFail(new NotFoundError('Card not found'))
     .then((card) => {
-      if(!(card.owner.toString() === req.user._id)){
+      if (!(card.owner.toString() === req.user._id)) {
         throw new ForbiddenError('No permission to delete');
       }
       Card.findByIdAndRemove({ _id: cardId })
-      .orFail(new NotFoundError('Card not found'))
-      .then((card) => res
-        .status(HTTP_SUCCESS_OK)
-        .send(card))
-      .catch(next)
+        .orFail(new NotFoundError('Card not found'))
+        .then((cardDeleted) => res
+          .status(HTTP_SUCCESS_OK)
+          .send(cardDeleted))
+        .catch(next);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -101,7 +102,7 @@ const likeCard = (req, res, next) => {
   const { cardId } = req.params;
 
   Card.findByIdAndUpdate(
-    {_id: cardId},
+    { _id: cardId },
     { $addToSet: { likes: currentUser } },
     { new: true },
   )

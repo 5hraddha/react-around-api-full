@@ -3,13 +3,14 @@
  * @module middlewares/auth
  */
 const jwt = require('jsonwebtoken');
+
 const { NODE_ENV, JWT_SECRET } = process.env;
 const UnauthorizedError = require('../errors/unauthorized-error');
 
 const auth = (req, res, next) => {
   const { authorization } = req.headers;
 
-  if(!authorization || !authorization.startsWith('Bearer ')) {
+  if (!authorization || !authorization.startsWith('Bearer ')) {
     return next(new UnauthorizedError('Authorization Required'));
   }
 
@@ -18,13 +19,13 @@ const auth = (req, res, next) => {
 
   try {
     payload = jwt.verify(token, NODE_ENV === 'production' ? JWT_SECRET : 'super-secret-key');
-  } catch(err) {
+  } catch (err) {
     return next(new UnauthorizedError('Authorization Required'));
   }
 
   req.user = payload;
 
-  next();
-}
+  return next();
+};
 
 module.exports = auth;
