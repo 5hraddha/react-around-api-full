@@ -86,7 +86,6 @@ const validateCard = celebrate({
   }),
 });
 
-
 /**
  * Middleware for validating login
  */
