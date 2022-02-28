@@ -1,9 +1,9 @@
-const HTTP_CLIENT_ERROR_UNAUTHORIZED = require('../utils/constants');
+const { HTTP_CLIENT_ERROR_UNAUTHORIZED } = require('../utils/constants');
 
 class UnauthorizedError extends Error {
   constructor(message) {
     super(message);
-    this.statusCode = HTTP_CLIENT_ERROR_UNAUTHORIZED;
+    this.status = HTTP_CLIENT_ERROR_UNAUTHORIZED;
   }
 }
 
