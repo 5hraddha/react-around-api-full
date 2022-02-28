@@ -46,11 +46,15 @@ The project has the following directory structure:
 | `/models` 	| Contains all MongoDB schemas and models - all data layers. 	|
 | `/routes` 	| Contains routing files. 	|
 | `/controllers` 	| Contains all the route handler callbacks. 	|
+| `/errors`   | Custom error handlers  |
+| `/middlewares` | All the custom middlewares  |
 | `/utils` 	| Contains all the helper methods for general purpose tasks. 	|
 
 ## REST API Endpoints
 | HTTP Methods | REST API Endpoint      | Purpose                                |
 |--------------|------------------------|----------------------------------------|
+| `POST`       | `/signup`              | Registers a user                       |
+| `POST`       | `/signin`              | Login a user                           |
 | `GET`        | `/users`               | Get JSON list of all the users         |
 | `GET`        | `/users/:userId`       | Get a specific user profile with an ID |
 | `POST`       | `/users`               | Create a specific user profile         |
