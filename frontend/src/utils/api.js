@@ -137,7 +137,7 @@ class Api {
 
 const BASE_URL =
   process.env.NODE_ENV === 'production'
-    ? 'http://localhost:3000'
+    ? 'https://api.shraddha.students.nomoreparties.sbs'
     : 'http://localhost:3000';
 
 export default new Api({
