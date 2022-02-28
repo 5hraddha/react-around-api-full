@@ -32,6 +32,13 @@ app.use(rateLimiter);
 // enabling the request logger
 app.use(requestLogger);
 
+//crash test for code review
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Server will crash now');
+  }, 0);
+});
+
 app.post('/signin', validateLogin, loginUser);
 app.post('/signup', validateUser, createUser);
 
