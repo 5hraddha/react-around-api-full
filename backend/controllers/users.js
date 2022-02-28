@@ -156,7 +156,7 @@ const loginUser = (req, res, next) => {
  * @return {Object} `404` - The server can not find the requested resource.
  * @return {Object} `500` - Internal server error response.
  */
-const updateUserProfile = (req, res) => {
+const updateUserProfile = (req, res, next) => {
   const currentUser = req.user._id;
   const { name, about } = req.body;
 
@@ -192,7 +192,7 @@ const updateUserProfile = (req, res) => {
  * @return {Object} `404` - The server can not find the requested resource.
  * @return {Object} `500` - Internal server error response.
  */
-const updateUserAvatar = (req, res) => {
+const updateUserAvatar = (req, res, next) => {
   const currentUser = req.user._id;
   const { avatar } = req.body;
 
