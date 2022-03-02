@@ -27,10 +27,12 @@ app.use(helmet());
 app.use(cors());
 app.options('*', cors());
 app.use(express.json());
-app.use(rateLimiter);
 
 // enabling the request logger
 app.use(requestLogger);
+
+// enabling server request limiter
+app.use(rateLimiter);
 
 // crash test for code review
 app.get('/crash-test', () => {
