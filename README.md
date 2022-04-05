@@ -1,4 +1,4 @@
-# Project: Around the U.S. Back End
+# Project: Around the U.S. Social Network
 ## About the Project
 **Around the U.S.** is a full stack project that features a responsive social network website where a user can have a collection of the pictures of his journey around the US. The webpage interacts with the API endpoints using REST API calls hosted on a backend server.
 
