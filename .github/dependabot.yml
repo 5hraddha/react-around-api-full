@@ -1,0 +1,35 @@
+version: 2
+updates:
+
+  # Maintain dependencies for npm
+  - package-ecosystem: "npm"
+    directory: "/backend"
+    schedule:
+      interval: "daily"
+    allow:
+      # Allow both direct and indirect updates for all packages
+      - dependency-type: "all"
+    ignore:
+      - dependency-name: "express"
+        # For Express, ignore all updates for version 4 and 5
+        versions: ["4.x", "5.x"]
+      - dependency-name: "mongoose"
+        # For Mongoose, ignore all updates for version 6
+        versions: ["6.x"]
+    reviewers:
+      - "5hraddha"
+
+  # Maintain dependencies for npm
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "daily"
+    allow:
+      # Allow both direct and indirect updates for all packages
+      - dependency-type: "all"
+    ignore:
+      - dependency-name: "react-router-dom"
+        # For React Router, ignore all updates for version 5
+        versions: ["5.x"]
+    reviewers:
+      - "5hraddha"
