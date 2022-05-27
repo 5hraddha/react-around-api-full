@@ -1,0 +1,19 @@
+{
+  "name": "react-around-api-full",
+  "version": "1.0.0",
+  "description": "React app for photo sharing with express backend and mongodb as database",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/5hraddha/react-around-api-full.git"
+  },
+  "author": "Shraddha",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/5hraddha/react-around-api-full/issues"
+  },
+  "homepage": "https://github.com/5hraddha/react-around-api-full#readme"
+}
