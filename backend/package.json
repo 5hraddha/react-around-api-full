@@ -18,7 +18,7 @@
     "url": "https://github.com/5hraddha/around-express/issues"
   },
   "devDependencies": {
-    "eslint": "^8.6.0",
+    "eslint": "^8.27.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.25.4",
     "nodemon": "^2.0.15"
